@@ -32,10 +32,10 @@ HLS video streaming application with Minio object storage, Kafka, Debezium and F
 7. goto http://localhost:8082/swagger-ui/index.html#/storage-controller/upload and upload a mp4 file
 
 
-8. goto http://localhost:8082/swagger-ui/index.html#/video-controller/create and create a video with the filename in 6.
+8. goto http://localhost:8082/swagger-ui/index.html#/video-controller/create and create a video with the filename in 7. , please copy the video id from response 
 
 
-9. goto http://localhost:8082/swagger-ui/index.html#/video-controller/profile and wait for the video status become READY
+9. goto http://localhost:8082/swagger-ui/index.html#/video-controller/profile with video id and wait for the video status become READY
 
 
 10. use http://localhost:8082/api/video/{your_video_id}/index.m3u8 for any HLS player
