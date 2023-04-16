@@ -1,0 +1,2 @@
+curl.exe -i -X POST -H "Content-Type:application/json" localhost:8071/connectors/ -d "@./connector-video-event.json"
+curl.exe -i -X POST -H "Content-Type:application/json" localhost:8071/connectors/ -d "@./connector-worker-event-result.json"

@@ -1,0 +1,59 @@
+{
+	"before": null,
+	"after": {
+		"id": "8c3c8d61-5251-493b-9246-255a5e98aad9",
+		"operation": "PROCESS",
+		"source": "minio.bucket.store://user/ec2c44ac-7446-4c75-b8ff-0e4746e5514c/test.mp4",
+		"start_at": 1681459296200081,
+		"user_id": "ec2c44ac-7446-4c75-b8ff-0e4746e5514c",
+		"video_id": "47ecf9f4-1de5-4c82-bf21-70691f1b9a98"
+	},
+	"source": {
+		"version": "2.2.0.Beta1",
+		"connector": "postgresql",
+		"name": "spring-video",
+		"ts_ms": 1681459296204,
+		"snapshot": "false",
+		"db": "spring-video",
+		"sequence": "[\"27700856\",\"27701736\"]",
+		"schema": "public",
+		"table": "video_event",
+		"txId": 749,
+		"lsn": 27701736,
+		"xmin": null
+	},
+	"op": "c",
+	"ts_ms": 1681459296711,
+	"transaction": null
+}
+
+{
+	"before": null,
+	"after": {
+		"id": "8c3c8d61-5251-493b-9246-255a5e98aad9",
+		"complete_at": 1681459643525071,
+		"detail": "user/ec2c44ac-7446-4c75-b8ff-0e4746e5514c/video/47ecf9f4-1de5-4c82-bf21-70691f1b9a98/",
+		"operation": "PROCESS",
+		"start_at": 1681459296200081,
+		"status": "SUCCESS",
+		"user_id": "ec2c44ac-7446-4c75-b8ff-0e4746e5514c",
+		"video_id": "47ecf9f4-1de5-4c82-bf21-70691f1b9a98"
+	},
+	"source": {
+		"version": "2.2.0.Beta1",
+		"connector": "postgresql",
+		"name": "spring-worker",
+		"ts_ms": 1681459643544,
+		"snapshot": "false",
+		"db": "spring-worker",
+		"sequence": "[\"27588200\",\"27588256\"]",
+		"schema": "public",
+		"table": "video_event_result",
+		"txId": 739,
+		"lsn": 27588256,
+		"xmin": null
+	},
+	"op": "c",
+	"ts_ms": 1681459643866,
+	"transaction": null
+}

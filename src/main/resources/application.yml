@@ -1,0 +1,12 @@
+jwt:
+  secret:
+    publicKey: |
+      -----BEGIN PUBLIC KEY-----
+      MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzFVaIiZtFKJgIrrXa9ZQ
+      fHeGu3o/CFGAhybGXXcU6XWZpyIHNTUdx7ah1z+pMecXWqOIkmKVN92ktgV+TAEB
+      mB91TMr23dMU95JC5wz7H1sxUmO+0HuA5XkGUTXf6GqpIAYLvKnNNhd8eCFm/YAE
+      S9LMsRBVZqgAb7GDJDb+B4NTzUGtWn71/2rSnDsXg1+aV271MM7n20AcvRruXDWx
+      bz5Wx5kKnTbwrOSvQ1chCo/gg+t+xCUdZ78SyT2bRuUIe+d0qHyqdY6i4lvbiXzC
+      noZRygIMYfRyxh0y52Mw6NXLvowOZ2DDYtQMeJglyocOFeYqSgqiRsaELvoQ/5Y8
+      1wIDAQAB
+      -----END PUBLIC KEY-----

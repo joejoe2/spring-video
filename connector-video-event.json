@@ -1,0 +1,20 @@
+{
+  "name": "spring-video-event-connector",  
+  "config": {
+    "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+    "topic.prefix": "spring-video",
+    "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "key.converter.schemas.enable": "false",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter.schemas.enable": "false",
+    "database.hostname": "video-db",
+    "database.port": "5432", 
+    "database.user": "postgres", 
+    "database.password": "root_password", 
+    "database.dbname" : "spring-video", 
+    "database.server.name": "video-db", 
+    "table.include.list": "public.video_event",
+    "message.key.columns": "public.video_event:video_id",
+    "skipped.operations": "u,d,t"
+  }
+}

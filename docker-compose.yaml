@@ -1,0 +1,160 @@
+version: "3"
+services:
+  video-db:
+    image: debezium/postgres:15
+    container_name: video-db
+    hostname: video-db
+    environment:
+      POSTGRES_PASSWORD: root_password  # please change it
+      POSTGRES_DB: spring-video
+    volumes:
+      - ./postgresql/video-db:/var/lib/postgresql/data
+    ports:
+      - 5433:5432
+    networks:
+      - local
+
+  worker-db:
+    image: debezium/postgres:15
+    container_name: worker-db
+    hostname: worker-db
+    environment:
+      POSTGRES_PASSWORD: root_password  # please change it
+      POSTGRES_DB: spring-worker
+    volumes:
+      - ./postgresql/worker-db:/var/lib/postgresql/data
+    ports:
+      - 5434:5432
+    networks:
+      - local
+
+  minio:
+    image: minio/minio
+    container_name: minio
+    hostname: minio
+    restart: always
+    ports:
+      - 9000:9000 # api
+      - 9001:9001 # ui
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: root_password  # please change it
+    volumes:
+      - ./minio/data:/data
+    command: server --console-address ':9001' /data
+    networks:
+      - local
+
+  zookeeper:
+    image: debezium/zookeeper:2.2
+    container_name: zookeeper
+    restart: always
+    ports:
+      - 2181:2181
+      - 2888:2888
+      - 3888:3888
+    environment:
+      JMXPORT: 9010
+      JMXHOST: zookeeper
+    volumes: 
+      - ./zookeeper/data:/zookeeper/data
+      - ./zookeeper/txns:/zookeeper/txns
+      - ./zookeeper/log:/zookeeper/logs
+      - ./zookeeper/conf:/zookeeper/conf
+    networks:
+      - local
+
+  kafka1:
+    image: debezium/kafka:2.2
+    container_name: kafka1
+    restart: always
+    ports:
+      - 9092:9092
+      - 29092:29092
+    environment:
+      ZOOKEEPER_CONNECT: "zookeeper:2181"
+      BOOTSTRAP_SERVERS: "kafka1:29092,kafka2:29093"
+      ALLOW_PLAINTEXT_LISTENER: "yes"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:29092,PLAINTEXT_HOST://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1:29092,PLAINTEXT_HOST://localhost:9092
+      BROKER_ID: 1
+      ADVERTISED_HOST_NAME: kafka1
+      JMXPORT: 9011
+      JMXHOST: kafka1
+    depends_on:
+      - zookeeper
+    volumes: 
+      - ./kafka/kafka-1/data:/kafka/data
+      - ./kafka/kafka-1/log:/kafka/log
+      - ./kafka/kafka-1/config:/kafka/config
+    networks:
+      - local
+
+  kafka2:
+    image: debezium/kafka:2.2
+    container_name: kafka2
+    restart: always
+    ports:
+      - 9093:9093
+      - 29093:29093
+    environment:
+      ZOOKEEPER_CONNECT: "zookeeper:2181"
+      BOOTSTRAP_SERVERS: "kafka1:29092,kafka2:29093"
+      ALLOW_PLAINTEXT_LISTENER: "yes"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:29093,PLAINTEXT_HOST://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka2:29093,PLAINTEXT_HOST://localhost:9093
+      BROKER_ID: 2
+      ADVERTISED_HOST_NAME: kafka2
+      JMXPORT: 9011
+      JMXHOST: kafka2
+    depends_on:
+      - zookeeper
+    volumes: 
+      - ./kafka/kafka-2/data:/kafka/data
+      - ./kafka/kafka-2/log:/kafka/log
+      - ./kafka/kafka-2/config:/kafka/config
+    networks:
+      - local
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui
+    container_name: kafka-ui
+    ports:
+      - "8070:8080"
+    restart: always
+    environment:
+      KAFKA_CLUSTERS_0_NAME: "local"
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: "kafka1:29092,kafka2:29093"
+      KAFKA_CLUSTERS_0_ZOOKEEPER: "zookeeper:2181"
+      KAFKA_CLUSTERS_0_METRICS_PORT: 9011
+      KAFKA_CLUSTERS_0_KAFKACONNECT_0_NAME: connect
+      KAFKA_CLUSTERS_0_KAFKACONNECT_0_ADDRESS: http://connect:8083
+    networks:
+      - local
+
+  connect:
+    image: debezium/connect:2.2
+    container_name: connect
+    restart: always
+    ports:
+      - 8071:8083
+    environment:
+      GROUP_ID: 1
+      CONFIG_STORAGE_TOPIC: connect_configs
+      OFFSET_STORAGE_TOPIC: connect_offsets
+      STATUS_STORAGE_TOPIC: connect_statuses
+      BOOTSTRAP_SERVERS: "kafka1:29092,kafka2:29093"
+      JMXPORT: 9012
+      JMXHOST: connect
+    depends_on:
+      - kafka1
+      - kafka2
+    networks:
+      - local
+
+networks:
+  local:
