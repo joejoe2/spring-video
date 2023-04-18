@@ -5,6 +5,7 @@ import java.util.Map;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.consumer.CooperativeStickyAssignor;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -36,6 +37,9 @@ public class KafkaConfig {
     props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
     props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
     props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
+    props.put(
+        ConsumerConfig.PARTITION_ASSIGNMENT_STRATEGY_CONFIG,
+        CooperativeStickyAssignor.class.getName());
     return new DefaultKafkaConsumerFactory<>(props);
   }
 
@@ -46,6 +50,7 @@ public class KafkaConfig {
         new ConcurrentKafkaListenerContainerFactory<>();
     factory.setConsumerFactory(consumerFactory());
     factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL_IMMEDIATE);
+    factory.getContainerProperties().setSyncCommits(true);
     return factory;
   }
 

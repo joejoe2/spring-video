@@ -20,7 +20,7 @@ public class VideoEventHandler {
 
   @KafkaListener(
       topics = "spring-worker.public.video_event_result",
-      groupId = "consumer",
+      groupId = "spring-worker.public.video_event_result:consumer",
       concurrency = "1")
   void consume(String message, Consumer consumer) throws JsonProcessingException {
     EventResult result = objectMapper.readValue(message, EventResultDto.class).getResult();

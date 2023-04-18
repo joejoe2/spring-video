@@ -18,6 +18,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
 import java.util.UUID;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.retry.annotation.Backoff;
@@ -36,6 +38,7 @@ public class VideoServiceImpl implements VideoService {
   @Autowired ObjectStorageService objectStorageService;
   @Autowired ObjectStorageConfiguration objectStorageConfiguration;
   @Autowired StreamConfig streamConfig;
+  private static final Logger logger = LoggerFactory.getLogger(VideoService.class);
 
   @Override
   @Transactional(rollbackFor = Exception.class)
@@ -159,7 +162,10 @@ public class VideoServiceImpl implements VideoService {
     if (video == null) return;
     // check is processed before to prevent duplicated
     VideoEventResult r = resultRepository.findById(result.getId()).orElse(null);
-    if (r != null) return;
+    if (r != null) {
+      logger.info("duplicated event result !");
+      return;
+    }
     r = new VideoEventResult(result);
     // if operation fail(process or delete)
     if (ResultStatus.FAIL.equals(result.getStatus())) {
